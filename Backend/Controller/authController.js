@@ -63,8 +63,7 @@ export const login = async (req, res) => {
         message: "All fields are required",
       });
     }
-    const loginUser = await userModel
-      .findOne({ email: user_email })
+    const loginUser = await userModel.findOne({ email: user_email });
 
     console.log("usersssS", loginUser);
 
@@ -96,6 +95,24 @@ export const login = async (req, res) => {
     console.error("login error:", err);
     return res.status(500).json({
       message: "Server error",
+    });
+  }
+};
+
+export const userList = async (req, res) => {
+  try {
+    const alluser = await userModel.find();
+    if (alluser) {
+      return res.status(201).json({
+        message: "The list of all user from the reqo server",
+        userlist: alluser,
+      });
+    }
+    console.log("all user", alluser);
+  } catch (err) {
+    return res.status(404).json({
+      message: "Server error",
+      error: err,
     });
   }
 };
