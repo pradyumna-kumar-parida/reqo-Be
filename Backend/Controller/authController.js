@@ -72,19 +72,17 @@ export const login = async (req, res) => {
         .status(404)
         .json({ message: "Invalid user or user not found" });
     }
-    console.log("hashed password from DB:", loginUser.password);
+
     const matchPw = await bcrypt.compare(user_pw, loginUser.password);
     if (!matchPw) {
       return res.status(404).json({
         message: "Incorrect password",
       });
     }
-    console.log("passssss", matchPw);
 
     const token = jwt.sign({ userId: loginUser._id }, process.env.SECRET_KEY, {
       expiresIn: "1d",
     });
-    console.log("token", token);
 
     return res.status(201).json({
       message: "Login sucessfully !",
@@ -108,7 +106,6 @@ export const userList = async (req, res) => {
         userlist: alluser,
       });
     }
-    console.log("all user", alluser);
   } catch (err) {
     return res.status(404).json({
       message: "Server error",
