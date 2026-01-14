@@ -99,7 +99,8 @@ export const login = async (req, res) => {
 
 export const userList = async (req, res) => {
   try {
-    const alluser = await userModel.find();
+    const loggedInUserId = req.user.userId;
+    const alluser = await userModel.find({ _id: { $ne: loggedInUserId } });
     if (alluser) {
       return res.status(201).json({
         message: "The list of all user from the reqo server",

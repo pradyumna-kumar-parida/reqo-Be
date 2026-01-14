@@ -26,6 +26,11 @@ const userSchema = mongoose.Schema({
     minlength: 6,
     // select: false,
   },
+  friends: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
 });
 export const userModel = mongoose.model("User", userSchema);
-  

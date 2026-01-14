@@ -1,4 +1,5 @@
 import { request_Model } from "../Models/requestModel.js";
+import { userModel } from "../Models/userModel.js";
 
 export const sendRequest = async (req, res) => {
   try {
@@ -56,6 +57,71 @@ export const checkRequest = async (req, res) => {
     return res.status(201).json({ available_requests });
   } catch (e) {
     return res.status(405).json({
+      message: "Server error",
+      error: e,
+    });
+  }
+};
+
+export const acceptRequest = async (req, res) => {
+  try {
+    const loginUserId = req.user.userId;
+    const { requestId } = req.params;
+
+    const request = await request_Model.findOne({
+      _id: requestId,
+      receiver: loginUserId,
+      status: "pending",
+    });
+    if (!request) {
+      return res.status(409).json({
+        message: "There is no request or action to be taken",
+      });
+    }
+
+    request.status = "accepted";
+    await request.save();
+
+    await userModel.findByIdAndUpdate(request.sender, {
+      $addToSet: { friends: loginUserId },
+    });
+    await userModel.findByIdAndUpdate(loginUserId, {
+      $addToSet: { friends: request.sender },
+    });
+    return res.status(200).json({
+      message: "friend request accepted",
+    });
+  } catch (e) {
+    return res.status(404).json({
+      message: "Server error",
+      error: e,
+    });
+  }
+};
+export const cancelRequest = async (req, res) => {
+  try {
+    const loginUserId = req.user.userId;
+    const { requestId } = req.params;
+
+    const request = await request_Model.findOne({
+      _id: requestId,
+      receiver: loginUserId,
+      status: "pending",
+    });
+    if (!request) {
+      return res.status(409).json({
+        message: "There is no request or action to be taken",
+      });
+    }
+
+    request.status = "rejected";
+    await request.save();
+
+    return res.status(200).json({
+      message: "friend request cancelled",
+    });
+  } catch (e) {
+    return res.status(404).json({
       message: "Server error",
       error: e,
     });
