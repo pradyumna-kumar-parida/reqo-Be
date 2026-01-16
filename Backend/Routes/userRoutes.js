@@ -10,6 +10,7 @@ import {
   acceptRequest,
   cancelRequest,
   checkRequest,
+  getFriends,
   sendRequest,
 } from "../Controller/requestController.js";
 
@@ -22,4 +23,5 @@ user_Router.post("/sendRequest", varifyToken, sendRequest);
 user_Router.post("/checkRequest", varifyToken, checkRequest);
 user_Router.post("/acceptRequest/:requestId", varifyToken, acceptRequest);
 user_Router.post("/cancelRequest/:requestId", varifyToken, cancelRequest);
+user_Router.post("/friendList", varifyToken, getFriends);
 export default user_Router;

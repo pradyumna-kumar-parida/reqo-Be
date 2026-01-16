@@ -127,3 +127,26 @@ export const cancelRequest = async (req, res) => {
     });
   }
 };
+
+export const getFriends = async (req, res) => {
+  try {
+    const loginUser = req.user.userId;
+    const friendSerch = await userModel.findById(loginUser).populate("friends");
+    console.log("friends".friendSerch);
+
+    if (!friendSerch) {
+      return res.status(409).json({
+        message: "user not found",
+      });
+    }
+    return res.status(201).json({
+      message: "friends list",
+      friends: friendSerch.friends,
+    });
+  } catch (e) {
+    return res.status(404).json({
+      message: "Server error",
+      error: e,
+    });
+  }
+};
